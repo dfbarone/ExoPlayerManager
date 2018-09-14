@@ -200,8 +200,8 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
   // PlaybackControlView.VisibilityListener implementation
   @Override
   public void onVisibilityChange(int visibility) {
-    setDebugTextVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
-    setDebugRootVisibility(View.VISIBLE == visibility ? View.GONE : View.VISIBLE);
+    setDebugTextVisibility(View.VISIBLE);
+    setDebugRootVisibility(visibility);
   }
 
   // Internal methods
@@ -401,8 +401,8 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
 
   @Override
   protected void showControls() {
-    setDebugTextVisibility(View.GONE);
-    setDebugRootVisibility(View.GONE);
+    setDebugTextVisibility(View.VISIBLE);
+    setDebugRootVisibility(View.VISIBLE);
   }
 
   private void setDebugRootVisibility(int visibility) {
