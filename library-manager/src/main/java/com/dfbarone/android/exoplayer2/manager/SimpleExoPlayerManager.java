@@ -140,7 +140,7 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
       if (debugTextView == null) {
         //throw new IllegalStateException("Your view must contain a TextView with an id of R.id.debug_text_view");
       }
-      setDebugTextVisibility(View.GONE);
+      setDebugTextVisibility(View.VISIBLE);
       setDebugRootVisibility(View.GONE);
 
       // Initialize player view
@@ -200,7 +200,6 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
   // PlaybackControlView.VisibilityListener implementation
   @Override
   public void onVisibilityChange(int visibility) {
-    setDebugTextVisibility(View.VISIBLE);
     setDebugRootVisibility(visibility);
   }
 
@@ -401,7 +400,6 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
 
   @Override
   protected void showControls() {
-    setDebugTextVisibility(View.VISIBLE);
     setDebugRootVisibility(View.VISIBLE);
   }
 
