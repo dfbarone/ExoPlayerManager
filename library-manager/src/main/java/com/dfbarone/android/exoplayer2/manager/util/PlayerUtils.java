@@ -74,9 +74,14 @@ public class PlayerUtils {
   }
 
   public static void setDebugVisibility(View view, boolean debug, int visibility) {
+    setVisibility(view, debug ? visibility : View.GONE);
+  }
+
+  public static void setVisibility(View view, int visibility) {
     if (view != null) {
-      view.setVisibility(!debug ? View.GONE : visibility);
+      view.setVisibility(visibility);
     }
   }
+
 
 }
