@@ -222,8 +222,8 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
           extensions = new String[uriStrings.length];
         }
       } else {
-        onError(getContext().getString(R.string.unexpected_intent_action, action));
-        finish(getContext().getString(R.string.unexpected_intent_action, action));
+        onError(getContext().getString(R.string.unexpected_intent_action, action), new IllegalStateException(getContext().getString(R.string.unexpected_intent_action, action)));
+        //finish(getContext().getString(R.string.unexpected_intent_action, action));
         return;
       }
 
@@ -245,8 +245,8 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
           }
         }
         if (drmSessionManager == null) {
-          onError(getContext().getString(errorStringId));
-          finish(getContext().getString(errorStringId));
+          onError(getContext().getString(errorStringId), new IllegalStateException(getContext().getString(errorStringId)));
+          //finish(getContext().getString(errorStringId));
           return;
         }
       }
@@ -259,8 +259,8 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
       } else if (ABR_ALGORITHM_RANDOM.equals(abrAlgorithm)) {
         trackSelectionFactory = new RandomTrackSelection.Factory();
       } else {
-        onError(getContext().getString(R.string.error_unrecognized_abr_algorithm));
-        finish(getContext().getString(R.string.error_unrecognized_abr_algorithm));
+        onError(getContext().getString(R.string.error_unrecognized_abr_algorithm), new IllegalStateException(getContext().getString(R.string.error_unrecognized_abr_algorithm)));
+        //finish(getContext().getString(R.string.error_unrecognized_abr_algorithm));
         return;
       }
 
@@ -311,7 +311,7 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
         if (adsMediaSource != null) {
           mediaSource = adsMediaSource;
         } else {
-          onError(getContext().getString(R.string.ima_not_loaded));
+          onError(getContext().getString(R.string.ima_not_loaded), new IllegalStateException(getContext().getString(R.string.ima_not_loaded)));
         }
       } else {
         releaseAdsLoader();

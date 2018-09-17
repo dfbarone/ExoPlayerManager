@@ -90,9 +90,9 @@ public abstract class PlayerManager extends Player.DefaultEventListener {
     }
   }
 
-  protected void finish(String reason) {
+  protected void finish() {
     if (eventListener != null) {
-      eventListener.onFinish(reason);
+      eventListener.onFinish();
     }
   }
 
@@ -115,10 +115,10 @@ public abstract class PlayerManager extends Player.DefaultEventListener {
      */
     void onError(String message, Exception e);
 
-    /** Programmatic attempt to close player
-     * @param reason empty or null reason means user initiated close
+    /**
+     * User attempt to close player
      */
-    void onFinish(String reason);
+    void onFinish();
   }
 
   /** MediaSource builder methods*/

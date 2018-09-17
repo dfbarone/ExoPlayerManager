@@ -113,22 +113,17 @@ public class PlayerActivity extends Activity
   // ExoPlayerWrapper.EventListener
   @Override
   public void onError(String message, Exception e) {
-    if (!(e instanceof ExoPlaybackException) || e == null) {
+    if (e != null) {
       Log.d(TAG, "onError() " + message);
       Toast.makeText(this, message, Toast.LENGTH_LONG);
     }
   }
 
   @Override
-  public void onFinish(String reason) {
-    Log.d(TAG, "onFinish() " + reason);
-    if (TextUtils.isEmpty(reason)) {
-      // user attempt to close
-      super.finish();
-    } else {
-      // programmatic attempt to close
-      //super.finish();
-    }
+  public void onFinish() {
+    Log.d(TAG, "onFinish()");
+    // user attempt to close
+    super.finish();
   }
 
 }

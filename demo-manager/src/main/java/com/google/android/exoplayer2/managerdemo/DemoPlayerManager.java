@@ -71,7 +71,7 @@ public class DemoPlayerManager extends SimpleExoPlayerManager {
       initializePlayer();
     } else {
       onError(getContext().getString(R.string.storage_permission_denied));
-      finish(getContext().getString(R.string.storage_permission_denied));
+      //finish(getContext().getString(R.string.storage_permission_denied));
     }
   }
 
