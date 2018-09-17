@@ -195,6 +195,7 @@ public class SimpleExoPlayerManager extends ExoPlayerManager
   // PlaybackControlView.VisibilityListener implementation
   @Override
   public void onVisibilityChange(int visibility) {
+    setDebugTextVisibility(View.VISIBLE);
     setDebugRootVisibility(visibility);
   }
 
