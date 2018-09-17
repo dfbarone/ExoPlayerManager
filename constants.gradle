@@ -13,8 +13,8 @@
 // limitations under the License.
 project.ext {
     // ExoPlayer version and version code.
-    releaseVersion = '0.1.0'
-    releaseVersionCode = 100 // 1.1.0 == 100100
+    releaseVersion = '0.1.1'
+    releaseVersionCode = 101 // 1.1.0 == 100100
     // Important: ExoPlayer specifies a minSdkVersion of 14 because various
     // components provided by the library may be of use on older devices.
     // However, please note that the core media playback functionality provided
