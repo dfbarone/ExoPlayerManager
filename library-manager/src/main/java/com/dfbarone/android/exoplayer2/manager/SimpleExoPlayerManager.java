@@ -75,10 +75,13 @@ import java.net.CookiePolicy;
 public class SimpleExoPlayerManager extends ExoPlayerManager
     implements OnClickListener {
 
-  public static final String ACTION_VIEW = "com.google.android.exoplayer.demo.action.VIEW";
+  public static final String ACTION_VIEW = "com.dfbarone.android.exoplayer2.manager.action.VIEW";
+  public static final String ACTION_VIEW_CUSTOM = "com.dfbarone.android.exoplayer2.manager.action.VIEW_CUSTOM";
+  public static final String URI_EXTRA = "uri";
   public static final String EXTENSION_EXTRA = "extension";
 
-  public static final String ACTION_VIEW_LIST = "com.google.android.exoplayer.demo.action.VIEW_LIST";
+  public static final String ACTION_VIEW_LIST = "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST";
+  public static final String ACTION_VIEW_LIST_CUSTOM = "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST_CUSTOM";
   public static final String URI_LIST_EXTRA = "uri_list";
   public static final String EXTENSION_LIST_EXTRA = "extension_list";
 
