@@ -13,4 +13,10 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<manifest package="com.dfbarone.android.exoplayer2.manager" />
+<resources>
+
+  <item name="player_view" type="id"/>
+  <item name="controls_root" type="id"/>
+  <item name="debug_text_view" type="id"/>
+
+</resources>

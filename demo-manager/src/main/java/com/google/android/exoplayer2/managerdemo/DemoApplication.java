@@ -16,6 +16,8 @@
 package com.google.android.exoplayer2.managerdemo;
 
 import android.app.Application;
+import com.google.android.exoplayer2.managerdemo.BuildConfig;
+import com.google.android.exoplayer2.managerdemo.DownloadTracker;
 import com.google.android.exoplayer2.offline.DownloadAction.Deserializer;
 import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper;
