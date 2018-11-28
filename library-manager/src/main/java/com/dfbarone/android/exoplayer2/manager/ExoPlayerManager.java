@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.ui.PlayerControlView;
 /**
  * This class attempts to abstract basic state and non ui functionality.
  */
-public abstract class ExoPlayerManager extends PlayerManager
+public abstract class ExoPlayerManager<D> extends PlayerManager<D>
     implements PlaybackPreparer, PlayerControlView.VisibilityListener {
 
   // Saved instance state keys.

@@ -23,7 +23,7 @@ import com.google.android.exoplayer2.util.ErrorMessageProvider;
  * A class to enforce common and hopefully useful ExoPlayer methods.
  * This class attempts to avoid ui or state methods.
  */
-public abstract class PlayerManager extends Player.DefaultEventListener {
+public abstract class PlayerManager<D extends Object> extends Player.DefaultEventListener {
 
   // Injected interfaces
   private EventListener eventListener;
@@ -33,8 +33,13 @@ public abstract class PlayerManager extends Player.DefaultEventListener {
   private final Context mContext;
   private final View itemView;
 
-  // Optional place to store playback information here
+  // 1) Optional place to store playback information. In many cases this is probably the simplest
+  // way to store playback information.
   private Intent mIntent = new Intent();
+
+  // 2) Optional place to store playback information. In some cases that may be easier than using
+  // an intent.
+  private D mData = null;
 
   /** Default constructor*/
   protected PlayerManager(Context context, View itemView) {
@@ -70,6 +75,15 @@ public abstract class PlayerManager extends Player.DefaultEventListener {
 
   public void setIntent(Intent intent) {
     mIntent = intent;
+  }
+
+  // Data methods
+  public D getData() {
+    return mData;
+  }
+
+  public void setData(D data) {
+    mData = data;
   }
 
   // Listener for internal need to finish

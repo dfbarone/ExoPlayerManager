@@ -72,7 +72,7 @@ import java.net.CookiePolicy;
 /**
  * An class that plays media using {@link SimpleExoPlayer}.
  */
-public class SimpleExoPlayerManager extends ExoPlayerManager
+public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     implements OnClickListener {
 
   public static final String ACTION_VIEW = "com.dfbarone.android.exoplayer2.manager.action.VIEW";
