@@ -76,12 +76,15 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     implements OnClickListener {
 
   public static final String ACTION_VIEW = "com.dfbarone.android.exoplayer2.manager.action.VIEW";
-  public static final String ACTION_VIEW_CUSTOM = "com.dfbarone.android.exoplayer2.manager.action.VIEW_CUSTOM";
+  public static final String ACTION_VIEW_CUSTOM =
+      "com.dfbarone.android.exoplayer2.manager.action.VIEW_CUSTOM";
   public static final String URI_EXTRA = "uri";
   public static final String EXTENSION_EXTRA = "extension";
 
-  public static final String ACTION_VIEW_LIST = "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST";
-  public static final String ACTION_VIEW_LIST_CUSTOM = "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST_CUSTOM";
+  public static final String ACTION_VIEW_LIST =
+      "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST";
+  public static final String ACTION_VIEW_LIST_CUSTOM =
+      "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST_CUSTOM";
   public static final String URI_LIST_EXTRA = "uri_list";
   public static final String EXTENSION_LIST_EXTRA = "extension_list";
 
@@ -127,13 +130,14 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     }
 
     setPlayerDependencies(new CustomPlayerDependencies.Builder(new DefaultDataSourceBuilder(),
-            new DefaultMediaSourceBuilder()).build());
+        new DefaultMediaSourceBuilder()).build());
 
     if (getView() != null) {
       // Find views
       playerView = getView().findViewById(R.id.player_view);
       if (playerView == null) {
-        throw new IllegalStateException("Your view must contain a PlayerView with an id of R.id.player_view");
+        throw new IllegalStateException(
+            "Your view must contain a PlayerView with an id of R.id.player_view");
       }
       debugRootView = getView().findViewById(R.id.controls_root);
       debugTextView = getView().findViewById(R.id.debug_text_view);
@@ -187,7 +191,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
                 && mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
                 == MappedTrackInfo.RENDERER_SUPPORT_NO_TRACKS);
         Pair<AlertDialog, TrackSelectionView> dialogPair =
-            TrackSelectionView.getDialog(ContextHelper.getActivity(getContext()), title, trackSelector, rendererIndex);
+            TrackSelectionView.getDialog(ContextHelper.getActivity(getContext()), title,
+                trackSelector, rendererIndex);
         dialogPair.second.setShowDisableOption(true);
         dialogPair.second.setAllowAdaptiveSelections(allowAdaptiveSelections);
         dialogPair.first.show();
@@ -213,8 +218,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       Uri[] uris;
       String[] extensions;
       if (ACTION_VIEW.equals(action)) {
-        uris = new Uri[]{intent.getData()};
-        extensions = new String[]{intent.getStringExtra(EXTENSION_EXTRA)};
+        uris = new Uri[] { intent.getData() };
+        extensions = new String[] { intent.getStringExtra(EXTENSION_EXTRA) };
       } else if (ACTION_VIEW_LIST.equals(action)) {
         String[] uriStrings = intent.getStringArrayExtra(URI_LIST_EXTRA);
         uris = new Uri[uriStrings.length];
@@ -226,7 +231,9 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
           extensions = new String[uriStrings.length];
         }
       } else {
-        onError(getContext().getString(R.string.unexpected_intent_action, action), new IllegalStateException(getContext().getString(R.string.unexpected_intent_action, action)));
+        onError(getContext().getString(R.string.unexpected_intent_action, action),
+            new IllegalStateException(
+                getContext().getString(R.string.unexpected_intent_action, action)));
         //finish(getContext().getString(R.string.unexpected_intent_action, action));
         return;
       }
@@ -240,7 +247,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
           errorStringId = R.string.error_drm_not_supported;
         } else {
           try {
-            drmSessionManager = playerDependencies().drmSessionManagerBuilder().buildDrmSessionManager();
+            drmSessionManager =
+                playerDependencies().drmSessionManagerBuilder().buildDrmSessionManager();
           } catch (UnsupportedDrmException e) {
             errorStringId = e.reason == UnsupportedDrmException.REASON_UNSUPPORTED_SCHEME
                 ? R.string.error_drm_unsupported_scheme : R.string.error_drm_unknown;
@@ -249,7 +257,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
           }
         }
         if (drmSessionManager == null) {
-          onError(getContext().getString(errorStringId), new IllegalStateException(getContext().getString(errorStringId)));
+          onError(getContext().getString(errorStringId),
+              new IllegalStateException(getContext().getString(errorStringId)));
           //finish(getContext().getString(errorStringId));
           return;
         }
@@ -263,30 +272,40 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       } else if (ABR_ALGORITHM_RANDOM.equals(abrAlgorithm)) {
         trackSelectionFactory = new RandomTrackSelection.Factory();
       } else {
-        onError(getContext().getString(R.string.error_unrecognized_abr_algorithm), new IllegalStateException(getContext().getString(R.string.error_unrecognized_abr_algorithm)));
+        onError(getContext().getString(R.string.error_unrecognized_abr_algorithm),
+            new IllegalStateException(
+                getContext().getString(R.string.error_unrecognized_abr_algorithm)));
         //finish(getContext().getString(R.string.error_unrecognized_abr_algorithm));
         return;
       }
 
-      @DefaultRenderersFactory.ExtensionRendererMode int extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+      @DefaultRenderersFactory.ExtensionRendererMode int extensionRendererMode =
+          DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
       if (intent.hasExtra(PREFER_EXTENSION_DECODERS_EXTRA)) {
-        boolean preferExtensionDecoders = intent.getBooleanExtra(PREFER_EXTENSION_DECODERS_EXTRA, false);
-        extensionRendererMode = preferExtensionDecoders ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
+        boolean preferExtensionDecoders =
+            intent.getBooleanExtra(PREFER_EXTENSION_DECODERS_EXTRA, false);
+        extensionRendererMode =
+            preferExtensionDecoders ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
       }
 
-      DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext(), extensionRendererMode);
+      DefaultRenderersFactory renderersFactory =
+          new DefaultRenderersFactory(getContext(), extensionRendererMode);
 
       trackSelector = new DefaultTrackSelector(trackSelectionFactory);
       trackSelector.setParameters(trackSelectorParameters);
       lastSeenTrackGroupArray = null;
 
-      player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, getLoadControl(), drmSessionManager);
+      player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, getLoadControl(),
+          drmSessionManager);
       player.addListener(this);
       player.setPlayWhenReady(startAutoPlay);
       player.addAnalyticsListener(new EventLogger(trackSelector));
       if (playerView != null) {
-        if (playerDependencies() instanceof CustomPlayerDependencies && ((CustomPlayerDependencies)playerDependencies()).errorMessageProvider() != null) {
-          playerView.setErrorMessageProvider(((CustomPlayerDependencies)playerDependencies()).errorMessageProvider());
+        if (playerDependencies() instanceof CustomPlayerDependencies
+            && ((CustomPlayerDependencies) playerDependencies()).errorMessageProvider() != null) {
+          playerView.setErrorMessageProvider(
+              ((CustomPlayerDependencies) playerDependencies()).errorMessageProvider());
         }
         playerView.setPlayer(player);
         playerView.setPlaybackPreparer(this);
@@ -298,7 +317,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
 
       MediaSource[] mediaSources = new MediaSource[uris.length];
       for (int i = 0; i < uris.length; i++) {
-        mediaSources[i] = playerDependencies().mediaSourceBuilder().buildMediaSource(uris[i], extensions[i]);
+        mediaSources[i] =
+            playerDependencies().mediaSourceBuilder().buildMediaSource(uris[i], extensions[i]);
       }
       mediaSource =
           mediaSources.length == 1 ? mediaSources[0] : new ConcatenatingMediaSource(mediaSources);
@@ -311,11 +331,13 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
           releaseAdsLoader();
           loadedAdTagUri = adTagUri;
         }
-        MediaSource adsMediaSource = playerDependencies().adsMediaSourceBuilder().createAdsMediaSource(mediaSource, Uri.parse(adTagUriString));
+        MediaSource adsMediaSource = playerDependencies().adsMediaSourceBuilder()
+            .createAdsMediaSource(mediaSource, Uri.parse(adTagUriString));
         if (adsMediaSource != null) {
           mediaSource = adsMediaSource;
         } else {
-          onError(getContext().getString(R.string.ima_not_loaded), new IllegalStateException(getContext().getString(R.string.ima_not_loaded)));
+          onError(getContext().getString(R.string.ima_not_loaded),
+              new IllegalStateException(getContext().getString(R.string.ima_not_loaded)));
         }
       } else {
         releaseAdsLoader();
@@ -416,7 +438,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
     super.onTracksChanged(trackGroups, trackSelections);
     if (trackGroups != lastSeenTrackGroupArray) {
-      MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+      MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
+          trackSelector.getCurrentMappedTrackInfo();
       if (mappedTrackInfo != null) {
         if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
             == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
@@ -433,8 +456,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
 
   public LoadControl getLoadControl() {
     if (playerDependencies() instanceof CustomPlayerDependencies &&
-            ((CustomPlayerDependencies)playerDependencies()).loadControl() != null) {
-      return ((CustomPlayerDependencies)playerDependencies()).loadControl();
+        ((CustomPlayerDependencies) playerDependencies()).loadControl() != null) {
+      return ((CustomPlayerDependencies) playerDependencies()).loadControl();
     } else {
       return new DefaultLoadControl();
     }
@@ -447,7 +470,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       // Optional
       TransferListener<? super DataSource> listener = useBandwidthMeter ? BANDWIDTH_METER : null;
       DefaultDataSourceFactory upstreamFactory =
-          new DefaultDataSourceFactory(getContext(), listener, buildHttpDataSourceFactory(listener));
+          new DefaultDataSourceFactory(getContext(), listener,
+              buildHttpDataSourceFactory(listener));
       return upstreamFactory;
     }
 
@@ -455,7 +479,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     @Override
     public HttpDataSource.Factory buildHttpDataSourceFactory(
         TransferListener<? super DataSource> listener) {
-      return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), USER_AGENT), listener);
+      return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), USER_AGENT),
+          listener);
     }
   }
 
@@ -475,7 +500,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   }
 
   // Extend base initializePlayer() method dependency builder
-  public static class CustomPlayerDependencies<B extends CustomPlayerDependencies.Builder<B>> extends PlayerDependencies<B> {
+  public static class CustomPlayerDependencies<B extends CustomPlayerDependencies.Builder<B>>
+      extends PlayerDependencies<B> {
 
     private LoadControl loadControl;
     private ErrorMessageProvider errorMessageProvider;
@@ -505,19 +531,18 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
 
       public T setLoadControl(LoadControl loadControl) {
         this.loadControl = loadControl;
-        return (T)this;
+        return (T) this;
       }
 
-      public T setErrorMessageProvider(ErrorMessageProvider<ExoPlaybackException> errorMessageProvider) {
+      public T setErrorMessageProvider(
+          ErrorMessageProvider<ExoPlaybackException> errorMessageProvider) {
         this.errorMessageProvider = errorMessageProvider;
-        return (T)this;
+        return (T) this;
       }
 
       public CustomPlayerDependencies build() {
         return new CustomPlayerDependencies(this);
       }
     }
-
   }
-
 }
