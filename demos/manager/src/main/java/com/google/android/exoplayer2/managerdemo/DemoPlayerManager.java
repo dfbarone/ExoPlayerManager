@@ -36,11 +36,6 @@ import java.util.UUID;
 
 public class DemoPlayerManager extends SimpleExoPlayerManager {
 
-  public static final String DRM_SCHEME_EXTRA = "drm_scheme";
-  public static final String DRM_LICENSE_URL_EXTRA = "drm_license_url";
-  public static final String DRM_KEY_REQUEST_PROPERTIES_EXTRA = "drm_key_request_properties";
-  public static final String DRM_MULTI_SESSION_EXTRA = "drm_multi_session";
-
   public static final String SPHERICAL_STEREO_MODE_EXTRA = "spherical_stereo_mode";
   public static final String SPHERICAL_STEREO_MODE_MONO = "mono";
   public static final String SPHERICAL_STEREO_MODE_TOP_BOTTOM = "top_bottom";
@@ -54,7 +49,7 @@ public class DemoPlayerManager extends SimpleExoPlayerManager {
 
     /* Customizations in intializePlayer */
     setPlayerDependencies(
-        new CustomPlayerDependencies.Builder(
+        new SimplePlayerDependencies.Builder(
             new DemoDataSourceBuilder(),
             new DefaultMediaSourceBuilder()
         )
@@ -98,21 +93,7 @@ public class DemoPlayerManager extends SimpleExoPlayerManager {
 
   private class DemoDrmSessionManagerBuilder implements DrmSessionManagerBuilder {
     @Override
-    public DefaultDrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManager() throws UnsupportedDrmException {
-      Intent intent = getIntent();
-      String drmLicenseUrl = intent.getStringExtra(DRM_LICENSE_URL_EXTRA);
-      String[] keyRequestPropertiesArray = intent.getStringArrayExtra(DRM_KEY_REQUEST_PROPERTIES_EXTRA);
-      boolean multiSession = intent.getBooleanExtra(DRM_MULTI_SESSION_EXTRA, false);
-      String drmSchemeExtra = intent.hasExtra(DRM_SCHEME_EXTRA) ? DRM_SCHEME_EXTRA : DRM_SCHEME_UUID_EXTRA;
-      UUID drmSchemeUuid = Util.getDrmUuid(intent.getStringExtra(drmSchemeExtra));
-      if (drmSchemeUuid != null) {
-        return buildDrmSessionManagerV18(drmSchemeUuid, drmLicenseUrl, keyRequestPropertiesArray, multiSession);
-      } else {
-        return null;
-      }
-    }
-
-    private DefaultDrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
+    public DefaultDrmSessionManager<FrameworkMediaCrypto> buildDrmSessionManagerV18(
         UUID uuid, String licenseUrl, String[] keyRequestPropertiesArray, boolean multiSession)
         throws UnsupportedDrmException {
       HttpDataSource.Factory licenseDataSourceFactory =
@@ -125,22 +106,25 @@ public class DemoPlayerManager extends SimpleExoPlayerManager {
               keyRequestPropertiesArray[i + 1]);
         }
       }
+      releaseMediaDrm();
+      mediaDrm = FrameworkMediaDrm.newInstance(uuid);
       return new DefaultDrmSessionManager<>(
-          uuid, FrameworkMediaDrm.newInstance(uuid), drmCallback, null, multiSession);
+          uuid, mediaDrm, drmCallback, null, multiSession);
     }
+
+    @Override
+    public void releaseMediaDrm() {
+      if (mediaDrm != null) {
+        mediaDrm.release();
+        mediaDrm = null;
+      }
+    }
+
   }
 
   private class DemoAdsMediaSourceBuilder implements AdsMediaSourceBuilder {
-    // Fields used only for ad playback. The ads loader is loaded via reflection.
-    protected AdsLoader adsLoader;
-    protected ViewGroup adUiViewGroup;
-
-    /**
-     * Returns an ads media source, reusing the ads loader if one exists.
-     */
-    @Override
-    public @Nullable
-    MediaSource createAdsMediaSource(MediaSource mediaSource, Uri adTagUri) {
+    /** Returns an ads media source, reusing the ads loader if one exists. */
+    public @Nullable MediaSource createAdsMediaSource(MediaSource mediaSource, Uri adTagUri) {
       // Load the extension source using reflection so the demo app doesn't have to depend on it.
       // The ads loader is reused for multiple playbacks, so that ad playback can resume.
       try {
@@ -149,30 +133,26 @@ public class DemoPlayerManager extends SimpleExoPlayerManager {
           // Full class names used so the LINT.IfChange rule triggers should any of the classes move.
           // LINT.IfChange
           Constructor<? extends AdsLoader> loaderConstructor =
-              loaderClass
-                  .asSubclass(AdsLoader.class)
-                  .getConstructor(Context.class, Uri.class);
+                  loaderClass
+                          .asSubclass(AdsLoader.class)
+                          .getConstructor(android.content.Context.class, android.net.Uri.class);
           // LINT.ThenChange(../../../../../../../../proguard-rules.txt)
-          adsLoader = loaderConstructor.newInstance(this, adTagUri);
-          adUiViewGroup = new FrameLayout(/*this*/getContext());
-          // The demo app has a non-null overlay frame layout.
-          if (playerView != null) {
-            playerView.getOverlayFrameLayout().addView(adUiViewGroup);
-          }
+          adsLoader = loaderConstructor.newInstance(getContext(), adTagUri);
         }
+        adsLoader.setPlayer(player);
         AdsMediaSource.MediaSourceFactory adMediaSourceFactory =
-            new AdsMediaSource.MediaSourceFactory() {
-              @Override
-              public MediaSource createMediaSource(Uri uri) {
-                return playerDependencies().mediaSourceBuilder().buildMediaSource(uri);
-              }
+                new AdsMediaSource.MediaSourceFactory() {
+                  @Override
+                  public MediaSource createMediaSource(Uri uri) {
+                    return playerDependencies().mediaSourceBuilder().buildMediaSource(uri);
+                  }
 
-              @Override
-              public int[] getSupportedTypes() {
-                return new int[]{C.TYPE_DASH, C.TYPE_SS, C.TYPE_HLS, C.TYPE_OTHER};
-              }
-            };
-        return new AdsMediaSource(mediaSource, adMediaSourceFactory, adsLoader, adUiViewGroup);
+                  @Override
+                  public int[] getSupportedTypes() {
+                    return new int[] {C.TYPE_DASH, C.TYPE_SS, C.TYPE_HLS, C.TYPE_OTHER};
+                  }
+                };
+        return new AdsMediaSource(mediaSource, adMediaSourceFactory, adsLoader, playerView);
       } catch (ClassNotFoundException e) {
         // IMA extension not loaded.
         return null;
