@@ -165,7 +165,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   @Override
   public void setPlayerDependencies(PlayerDependencies dependencies) {
     super.setPlayerDependencies(dependencies);
-    mediaDataSourceFactory = dependencies.dataSourceBuilder().buildDataSourceFactory(true);
+    mediaDataSourceFactory = dependencies.dataSourceBuilder().buildDataSourceFactory();
   }
 
   // Activity lifecycle
@@ -296,8 +296,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       trackSelector.setParameters(trackSelectorParameters);
       lastSeenTrackGroupArray = null;
 
-      player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, getLoadControl(),
-          drmSessionManager);
+      player = ExoPlayerFactory.newSimpleInstance(getContext(), renderersFactory, trackSelector,
+          getLoadControl(), drmSessionManager, BANDWIDTH_METER);
       player.addListener(this);
       player.setPlayWhenReady(startAutoPlay);
       player.addAnalyticsListener(new EventLogger(trackSelector));
@@ -466,21 +466,16 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   public class DefaultDataSourceBuilder implements DataSourceBuilder {
     /*** Returns a new DataSource factory.*/
     @Override
-    public DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
-      // Optional
-      TransferListener<? super DataSource> listener = useBandwidthMeter ? BANDWIDTH_METER : null;
+    public DataSource.Factory buildDataSourceFactory() {
       DefaultDataSourceFactory upstreamFactory =
-          new DefaultDataSourceFactory(getContext(), listener,
-              buildHttpDataSourceFactory(listener));
+          new DefaultDataSourceFactory(getContext(), buildHttpDataSourceFactory());
       return upstreamFactory;
     }
 
     /*** Returns a {@link HttpDataSource.Factory}.*/
     @Override
-    public HttpDataSource.Factory buildHttpDataSourceFactory(
-        TransferListener<? super DataSource> listener) {
-      return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), USER_AGENT),
-          listener);
+    public HttpDataSource.Factory buildHttpDataSourceFactory() {
+      return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), USER_AGENT));
     }
   }
 
@@ -494,7 +489,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     @SuppressWarnings("unchecked")
     public MediaSource buildMediaSource(Uri uri, @Nullable String overrideExtension) {
       return PlayerUtils.buildSimpleMediaSource(
-          playerDependencies().dataSourceBuilder().buildDataSourceFactory(false),
+          playerDependencies().dataSourceBuilder().buildDataSourceFactory(),
           mediaDataSourceFactory, uri, overrideExtension);
     }
   }

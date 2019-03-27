@@ -23,7 +23,7 @@ import com.google.android.exoplayer2.util.ErrorMessageProvider;
  * A class to enforce common and hopefully useful ExoPlayer methods.
  * This class attempts to avoid ui or state methods.
  */
-public abstract class PlayerManager<D> extends Player.DefaultEventListener {
+public abstract class PlayerManager<D> implements Player.EventListener {
 
   // Injected interfaces
   private EventListener eventListener;
@@ -147,11 +147,10 @@ public abstract class PlayerManager<D> extends Player.DefaultEventListener {
   /** DataSource.Factory builder methods */
   public interface DataSourceBuilder {
     /*** Returns a {@link DataSource.Factory}.*/
-    DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter);
+    DataSource.Factory buildDataSourceFactory();
 
     /*** Returns a {@link HttpDataSource.Factory}.*/
-    HttpDataSource.Factory buildHttpDataSourceFactory(
-        TransferListener<? super DataSource> listener);
+    HttpDataSource.Factory buildHttpDataSourceFactory();
   }
 
   /** Drm builder methods */

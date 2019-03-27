@@ -18,6 +18,11 @@ android {
     compileSdkVersion project.ext.compileSdkVersion
     buildToolsVersion project.ext.buildToolsVersion
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     defaultConfig {
         versionName project.ext.releaseVersion
         versionCode project.ext.releaseVersionCode
@@ -59,5 +64,5 @@ android {
 dependencies {
     implementation 'com.android.support:support-annotations:' + supportLibraryVersion
     implementation project(modulePrefix + 'library-manager')
-    implementation 'com.google.android.exoplayer:exoplayer:' + project.ext.exoplayerLibraryVersion
+    implementation 'com.google.android.exoplayer:exoplayer:' + project.ext.releaseVersion
 }
