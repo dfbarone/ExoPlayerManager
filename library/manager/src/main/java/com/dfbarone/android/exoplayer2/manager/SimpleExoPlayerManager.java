@@ -96,7 +96,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   public static final String DRM_KEY_REQUEST_PROPERTIES_EXTRA = "drm_key_request_properties";
   public static final String DRM_MULTI_SESSION_EXTRA = "drm_multi_session";
   // For backwards compatibility only.
-  private static final String DRM_SCHEME_UUID_EXTRA = "drm_scheme_uuid";
+  protected static final String DRM_SCHEME_UUID_EXTRA = "drm_scheme_uuid";
 
   public static final String PREFER_EXTENSION_DECODERS_EXTRA = "prefer_extension_decoders";
 

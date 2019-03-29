@@ -88,7 +88,6 @@ public class PlayerActivity extends Activity
   @Override
   public void onDestroy() {
     super.onDestroy();
-    playerManager.releasePlayer();
     playerManager.releaseAdsLoader();
   }
 

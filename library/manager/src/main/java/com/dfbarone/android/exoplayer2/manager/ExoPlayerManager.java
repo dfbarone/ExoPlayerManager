@@ -54,6 +54,7 @@ public abstract class ExoPlayerManager<D> extends PlayerManager<D>
   // Lifecycle methods
   public void onNewIntent(Intent intent) {
     releasePlayer();
+    releaseAdsLoader();
     clearStartPosition();
     setIntent(intent);
   }
