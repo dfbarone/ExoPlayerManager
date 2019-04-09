@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="_watch_width_dp">140dp</dimen>
+    <dimen name="_handset_width_dp">320dp</dimen>
+</resources>

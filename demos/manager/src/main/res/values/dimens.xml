@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="_watch_width_dp">@dimen/match_parent</dimen>
+    <dimen name="_handset_width_dp">@dimen/match_parent</dimen>
+    <dimen name="_center_width_sdp">@dimen/match_parent</dimen>
+</resources>
