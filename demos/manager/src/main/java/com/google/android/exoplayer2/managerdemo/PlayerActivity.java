@@ -112,17 +112,19 @@ public class PlayerActivity extends Activity
   // ExoPlayerWrapper.EventListener
   @Override
   public void onError(String message, Exception e) {
-    if (e != null) {
-      Log.d(TAG, "onError() " + message);
-      Toast.makeText(this, message, Toast.LENGTH_LONG);
+    Log.d(TAG, "onError() " + message);
+    Toast.makeText(this, message, Toast.LENGTH_LONG);
+
+    // Initialization error. finish.
+    if (e instanceof IllegalStateException) {
+      finish();
     }
   }
 
   @Override
   public void onFinish() {
     Log.d(TAG, "onFinish()");
-    // user attempt to close
-    super.finish();
+    finish();
   }
 
 }
