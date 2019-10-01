@@ -19,7 +19,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +27,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -107,7 +107,9 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   // ui
   protected PlayerView playerView;
   protected LinearLayout debugRootView;
+  private Button selectTracksButton;
   protected TextView debugTextView;
+  private boolean isShowingTrackSelectionDialog;
 
   // core
   protected SimpleExoPlayer player;
@@ -147,6 +149,8 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       }
       debugRootView = getView().findViewById(R.id.controls_root);
       debugTextView = getView().findViewById(R.id.debug_text_view);
+      selectTracksButton = getView().findViewById(R.id.select_tracks_button);
+      selectTracksButton.setOnClickListener(this);
 
       setDebugTextVisibility(View.VISIBLE);
       setDebugRootVisibility(View.GONE);
@@ -154,9 +158,6 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       // Initialize player view
       playerView.setControllerVisibilityListener(this);
       playerView.requestFocus();
-
-      // Set root on click listener
-      getView().setOnClickListener(this);
     }
 
     // Restore instance state
@@ -178,24 +179,19 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   // OnClickListener methods
   @Override
   public void onClick(View view) {
-    if (debugRootView != null &&
-        view.getParent() == debugRootView) {
-      MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-      if (mappedTrackInfo != null) {
-        CharSequence title = ((Button) view).getText();
-        int rendererIndex = (int) view.getTag();
-        int rendererType = mappedTrackInfo.getRendererType(rendererIndex);
-        boolean allowAdaptiveSelections =
-            rendererType == C.TRACK_TYPE_VIDEO
-                || (rendererType == C.TRACK_TYPE_AUDIO
-                && mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
-                == MappedTrackInfo.RENDERER_SUPPORT_NO_TRACKS);
-        Pair<AlertDialog, TrackSelectionView> dialogPair =
-            TrackSelectionView.getDialog(ContextHelper.getActivity(getContext()), title,
-                trackSelector, rendererIndex);
-        dialogPair.second.setShowDisableOption(true);
-        dialogPair.second.setAllowAdaptiveSelections(allowAdaptiveSelections);
-        dialogPair.first.show();
+    if (view == selectTracksButton
+        && !isShowingTrackSelectionDialog
+        && TrackSelectionDialog.willHaveContent(trackSelector)) {
+      isShowingTrackSelectionDialog = true;
+      TrackSelectionDialog trackSelectionDialog =
+          TrackSelectionDialog.createForTrackSelector(
+              trackSelector,
+              /* onDismissListener= */ dismissedDialog -> isShowingTrackSelectionDialog = false);
+
+      if (ContextHelper.isAppCompatActivity(getContext())) {
+        trackSelectionDialog.show(
+            ContextHelper.getAppCompatActivity(getContext()).getSupportFragmentManager(), /* tag= */
+            null);
       }
     }
   }
@@ -220,7 +216,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       }
       player.prepare(mediaSource, !haveStartPosition, false);
     }
-    updateButtonVisibilities();
+    updateButtonVisibility();
   }
 
   protected void buildPlayer() {
@@ -380,46 +376,9 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
 
   // User controls
   @Override
-  protected void updateButtonVisibilities() {
-    if (debugRootView != null) {
-      debugRootView.removeAllViews();
-    }
-
-    if (player == null) {
-      return;
-    }
-
-    MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-    if (mappedTrackInfo == null) {
-      return;
-    }
-
-    for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-      TrackGroupArray trackGroups = mappedTrackInfo.getTrackGroups(i);
-      if (trackGroups.length != 0) {
-        Button button = new Button(getContext());
-        int label;
-        switch (player.getRendererType(i)) {
-          case C.TRACK_TYPE_AUDIO:
-            label = R.string.exo_track_selection_title_audio;
-            break;
-          case C.TRACK_TYPE_VIDEO:
-            label = R.string.exo_track_selection_title_video;
-            break;
-          case C.TRACK_TYPE_TEXT:
-            label = R.string.exo_track_selection_title_text;
-            break;
-          default:
-            continue;
-        }
-        button.setText(label);
-        button.setTag(i);
-        button.setOnClickListener(this);
-        if (debugRootView != null) {
-          debugRootView.addView(button);
-        }
-      }
-    }
+  protected void updateButtonVisibility() {
+    selectTracksButton.setEnabled(
+        player != null && TrackSelectionDialog.willHaveContent(trackSelector));
   }
 
   @Override

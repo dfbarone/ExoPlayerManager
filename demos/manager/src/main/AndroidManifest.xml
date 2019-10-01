@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (C) 2016 The Android Open Source Project
-
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
      You may obtain a copy of the License at
-
           http://www.apache.org/licenses/LICENSE-2.0
-
      Unless required by applicable law or agreed to in writing, software
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,28 +12,32 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.android.exoplayer2.managerdemo">
+  xmlns:tools="http://schemas.android.com/tools"
+  package="com.google.android.exoplayer2.managerdemo">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
   <uses-feature android:name="android.software.leanback" android:required="false"/>
   <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
   <uses-sdk/>
 
   <application
-      android:label="@string/application_name"
-      android:icon="@mipmap/ic_launcher"
-      android:banner="@drawable/ic_banner"
-      android:largeHeap="true"
-      android:allowBackup="false"
-      android:name="com.google.android.exoplayer2.managerdemo.DemoApplication">
+    android:label="@string/application_name"
+    android:icon="@mipmap/ic_launcher"
+    android:banner="@drawable/ic_banner"
+    android:largeHeap="true"
+    android:allowBackup="false"
+    android:name="com.google.android.exoplayer2.managerdemo.DemoApplication"
+    tools:ignore="UnusedAttribute">
 
     <activity android:name="com.google.android.exoplayer2.managerdemo.SampleChooserActivity"
-        android:configChanges="keyboardHidden"
-        android:label="@string/application_name">
+      android:configChanges="keyboardHidden"
+      android:label="@string/application_name"
+      android:theme="@style/Theme.AppCompat">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -57,10 +58,10 @@
     </activity>
 
     <activity android:name="com.google.android.exoplayer2.managerdemo.PlayerActivity"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-        android:launchMode="singleTop"
-        android:label="@string/application_name"
-        android:theme="@style/PlayerTheme">
+      android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+      android:launchMode="singleTop"
+      android:label="@string/application_name"
+      android:theme="@style/PlayerTheme">
       <intent-filter>
         <action android:name="com.google.android.exoplayer.managerdemo.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
@@ -77,16 +78,16 @@
     </activity>
 
     <service android:name="com.google.android.exoplayer2.managerdemo.DemoDownloadService"
-        android:exported="false">
+      android:exported="false">
       <intent-filter>
-        <action android:name="com.google.android.exoplayer.downloadService.action.INIT"/>
+        <action android:name="com.google.android.exoplayer.downloadService.action.RESTART"/>
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </service>
 
     <service android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
-        android:permission="android.permission.BIND_JOB_SERVICE"
-        android:exported="true"/>
+      android:permission="android.permission.BIND_JOB_SERVICE"
+      android:exported="true"/>
 
   </application>
 

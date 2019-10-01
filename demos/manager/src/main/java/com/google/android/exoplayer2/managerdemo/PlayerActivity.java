@@ -18,17 +18,18 @@ package com.google.android.exoplayer2.managerdemo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.dfbarone.android.exoplayer2.manager.PlayerManager;
 import com.google.android.exoplayer2.util.Util;
 
 /** An activity that plays media using {@link DemoPlayerManager}. */
-public class PlayerActivity extends Activity
+public class PlayerActivity extends AppCompatActivity
     implements PlayerManager.EventListener {
 
   private static final String TAG = PlayerActivity.class.getSimpleName();
