@@ -163,8 +163,8 @@ public class DownloadTracker {
 
   private final class StartDownloadDialogHelper
       implements DownloadHelper.Callback,
-      DialogInterface.OnClickListener,
-      DialogInterface.OnDismissListener {
+          DialogInterface.OnClickListener,
+          DialogInterface.OnDismissListener {
 
     private final FragmentManager fragmentManager;
     private final DownloadHelper downloadHelper;
@@ -220,7 +220,7 @@ public class DownloadTracker {
     @Override
     public void onPrepareError(DownloadHelper helper, IOException e) {
       Toast.makeText(
-          context.getApplicationContext(), R.string.download_start_error, Toast.LENGTH_LONG)
+              context.getApplicationContext(), R.string.download_start_error, Toast.LENGTH_LONG)
           .show();
       Log.e(TAG, "Failed to start download", e);
     }

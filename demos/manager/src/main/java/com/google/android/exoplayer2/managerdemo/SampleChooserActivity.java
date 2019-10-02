@@ -36,7 +36,6 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.dfbarone.android.exoplayer2.manager.SimpleExoPlayerManager;
 import com.google.android.exoplayer2.ParserException;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.offline.DownloadService;

@@ -44,8 +44,9 @@ android {
     }
 
     lintOptions {
-        // The managerdemo app does not have translations.
-        disable 'MissingTranslation'
+        // The demo app isn't indexed, doesn't have translations, and has a
+        // banner for AndroidTV that's only in xhdpi density.
+        disable 'GoogleAppIndexingWarning','MissingTranslation','IconDensities'
     }
 
     flavorDimensions "extensions"
@@ -67,4 +68,17 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation project(modulePrefix + 'library-manager')
     implementation 'com.google.android.exoplayer:exoplayer:' + project.ext.releaseVersion
+    //implementation project(modulePrefix + 'library-core')
+    //implementation project(modulePrefix + 'library-dash')
+    //implementation project(modulePrefix + 'library-hls')
+    //implementation project(modulePrefix + 'library-smoothstreaming')
+    //implementation project(modulePrefix + 'library-ui')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-ffmpeg')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-flac')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-ima')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-opus')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-vp9')
+    //withExtensionsImplementation project(path: modulePrefix + 'extension-rtmp')
 }
+
+//apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
