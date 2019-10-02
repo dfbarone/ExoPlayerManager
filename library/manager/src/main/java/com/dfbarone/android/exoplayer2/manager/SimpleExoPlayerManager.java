@@ -107,9 +107,9 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   // ui
   protected PlayerView playerView;
   protected LinearLayout debugRootView;
-  private Button selectTracksButton;
+  protected Button selectTracksButton;
   protected TextView debugTextView;
-  private boolean isShowingTrackSelectionDialog;
+  protected boolean isShowingTrackSelectionDialog;
 
   // core
   protected SimpleExoPlayer player;
