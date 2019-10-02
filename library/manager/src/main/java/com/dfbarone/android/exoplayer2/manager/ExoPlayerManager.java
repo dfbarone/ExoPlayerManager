@@ -129,6 +129,7 @@ public abstract class ExoPlayerManager<D> extends PlayerManager<D>
     if (playbackState == Player.STATE_ENDED) {
       showControls();
     }
+    updateButtonVisibility();
   }
 
   @Override
