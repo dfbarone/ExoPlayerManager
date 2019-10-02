@@ -150,8 +150,9 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
       debugRootView = getView().findViewById(R.id.controls_root);
       debugTextView = getView().findViewById(R.id.debug_text_view);
       selectTracksButton = getView().findViewById(R.id.select_tracks_button);
-      selectTracksButton.setOnClickListener(this);
-
+      if (selectTracksButton != null) {
+        selectTracksButton.setOnClickListener(this);
+      }
       setDebugTextVisibility(View.VISIBLE);
       setDebugRootVisibility(View.GONE);
 
@@ -382,8 +383,10 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   // User controls
   @Override
   protected void updateButtonVisibility() {
-    selectTracksButton.setEnabled(
-        player != null && TrackSelectionDialog.willHaveContent(trackSelector));
+    if (selectTracksButton != null) {
+      selectTracksButton.setEnabled(
+          player != null && TrackSelectionDialog.willHaveContent(trackSelector));
+    }
   }
 
   @Override
