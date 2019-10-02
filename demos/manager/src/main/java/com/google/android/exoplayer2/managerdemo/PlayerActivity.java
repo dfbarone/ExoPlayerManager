@@ -59,14 +59,20 @@ public class PlayerActivity extends AppCompatActivity
     super.onStart();
     if (Util.SDK_INT > 23) {
       playerManager.initializePlayer();
+      if (playerManager.getPlayerView() != null) {
+        playerManager.getPlayerView().onResume();
+      }
     }
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    if (Util.SDK_INT <= 23) {
+    if (Util.SDK_INT <= 23 || playerManager.getPlayer() == null) {
       playerManager.initializePlayer();
+      if (playerManager.getPlayerView() != null) {
+        playerManager.getPlayerView().onResume();
+      }
     }
   }
 
@@ -74,6 +80,9 @@ public class PlayerActivity extends AppCompatActivity
   public void onPause() {
     super.onPause();
     if (Util.SDK_INT <= 23) {
+      if (playerManager.getPlayerView() != null) {
+        playerManager.getPlayerView().onPause();
+      }
       playerManager.releasePlayer();
     }
   }
@@ -82,6 +91,9 @@ public class PlayerActivity extends AppCompatActivity
   public void onStop() {
     super.onStop();
     if (Util.SDK_INT > 23) {
+      if (playerManager.getPlayerView() != null) {
+        playerManager.getPlayerView().onPause();
+      }
       playerManager.releasePlayer();
     }
   }

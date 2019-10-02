@@ -133,11 +133,6 @@ public abstract class ExoPlayerManager<D> extends PlayerManager<D>
   }
 
   @Override
-  public void onPositionDiscontinuity(@Player.DiscontinuityReason int reason) {
-    updateButtonVisibility();
-  }
-
-  @Override
   public void onPlayerError(ExoPlaybackException e) {
     if (PlayerUtils.isBehindLiveWindow(e)) {
       clearStartPosition();

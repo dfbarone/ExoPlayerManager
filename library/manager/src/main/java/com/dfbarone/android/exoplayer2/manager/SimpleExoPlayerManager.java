@@ -169,6 +169,11 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     return player;
   }
 
+  @Override
+  public PlayerView getPlayerView() {
+    return playerView;
+  }
+
   // Activity lifecycle
   public boolean dispatchKeyEvent(KeyEvent event) {
     // See whether the player view wants to handle media or DPAD keys events.

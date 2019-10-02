@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
@@ -51,7 +52,9 @@ public abstract class PlayerManager<D> implements Player.EventListener {
   }
 
   /*** Common player methods */
-  protected abstract <T extends Player> T getPlayer();
+  protected abstract <P extends Player> P getPlayer();
+
+  protected abstract <V extends PlayerView> V getPlayerView();
 
   protected abstract void initializePlayer();
 
