@@ -56,6 +56,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.DebugTextViewHelper;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TrackSelectionView;
+import com.google.android.exoplayer2.ui.spherical.SphericalSurfaceView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -76,33 +77,38 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     implements PlayerManager.DataSourceBuilder, PlayerManager.MediaSourceBuilder,
     PlayerManager.DrmSessionManagerBuilder, PlayerManager.AdsMediaSourceBuilder, OnClickListener {
 
-  public static final String ACTION_VIEW = "com.dfbarone.android.exoplayer2.manager.action.VIEW";
-  public static final String ACTION_VIEW_CUSTOM =
-      "com.dfbarone.android.exoplayer2.manager.action.VIEW_CUSTOM";
-  public static final String URI_EXTRA = "uri";
-  public static final String EXTENSION_EXTRA = "extension";
-
-  public static final String ACTION_VIEW_LIST =
-      "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST";
-  public static final String ACTION_VIEW_LIST_CUSTOM =
-      "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST_CUSTOM";
-  public static final String URI_LIST_EXTRA = "uri_list";
-  public static final String EXTENSION_LIST_EXTRA = "extension_list";
-
   public static final String DRM_SCHEME_EXTRA = "drm_scheme";
   public static final String DRM_LICENSE_URL_EXTRA = "drm_license_url";
   public static final String DRM_KEY_REQUEST_PROPERTIES_EXTRA = "drm_key_request_properties";
   public static final String DRM_MULTI_SESSION_EXTRA = "drm_multi_session";
-  // For backwards compatibility only.
-  protected static final String DRM_SCHEME_UUID_EXTRA = "drm_scheme_uuid";
-
   public static final String PREFER_EXTENSION_DECODERS_EXTRA = "prefer_extension_decoders";
+
+  public static final String ACTION_VIEW = "com.dfbarone.android.exoplayer2.manager.action.VIEW";
+  public static final String EXTENSION_EXTRA = "extension";
+
+  public static final String ACTION_VIEW_LIST = "com.dfbarone.android.exoplayer2.manager.action.VIEW_LIST";
+  public static final String URI_LIST_EXTRA = "uri_list";
+  public static final String EXTENSION_LIST_EXTRA = "extension_list";
+
+  public static final String AD_TAG_URI_EXTRA = "ad_tag_uri";
 
   public static final String ABR_ALGORITHM_EXTRA = "abr_algorithm";
   public static final String ABR_ALGORITHM_DEFAULT = "default";
   public static final String ABR_ALGORITHM_RANDOM = "random";
 
-  public static final String AD_TAG_URI_EXTRA = "ad_tag_uri";
+  public static final String SPHERICAL_STEREO_MODE_EXTRA = "spherical_stereo_mode";
+  public static final String SPHERICAL_STEREO_MODE_MONO = "mono";
+  public static final String SPHERICAL_STEREO_MODE_TOP_BOTTOM = "top_bottom";
+  public static final String SPHERICAL_STEREO_MODE_LEFT_RIGHT = "left_right";
+
+  // For backwards compatibility only.
+  protected static final String DRM_SCHEME_UUID_EXTRA = "drm_scheme_uuid";
+
+  protected static final CookieManager DEFAULT_COOKIE_MANAGER;
+  static {
+    DEFAULT_COOKIE_MANAGER = new CookieManager();
+    DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+  }
 
   // ui
   protected PlayerView playerView;
@@ -112,6 +118,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   protected boolean isShowingTrackSelectionDialog;
 
   // core
+  protected DataSource.Factory dataSourceFactory;
   protected SimpleExoPlayer player;
   protected FrameworkMediaDrm mediaDrm;
   protected MediaSource mediaSource;
@@ -121,24 +128,19 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   protected AdsLoader adsLoader;
   protected Uri loadedAdTagUri;
 
-  // HTTP and DataSource variables
-  protected final static String USER_AGENT = SimpleExoPlayerManager.class.getSimpleName();
-  protected static final CookieManager DEFAULT_COOKIE_MANAGER;
-  protected DataSource.Factory mediaDataSourceFactory;
-
-  static {
-    DEFAULT_COOKIE_MANAGER = new CookieManager();
-    DEFAULT_COOKIE_MANAGER.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-  }
-
   public SimpleExoPlayerManager(Context context, View view) {
     super(context, view);
+
+    /*String sphericalStereoMode = getIntent().getStringExtra(SPHERICAL_STEREO_MODE_EXTRA);
+    if (sphericalStereoMode != null && ContextHelper.isAppCompatActivity(getContext())) {
+      ContextHelper.getAppCompatActivity(getContext()).setTheme(R.style.PlayerTheme_Spherical);
+    }*/
 
     if (CookieHandler.getDefault() != DEFAULT_COOKIE_MANAGER) {
       CookieHandler.setDefault(DEFAULT_COOKIE_MANAGER);
     }
 
-    mediaDataSourceFactory = buildDataSourceFactory();
+    dataSourceFactory = buildDataSourceFactory();
 
     if (getView() != null) {
       // Find views
@@ -158,7 +160,26 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
 
       // Initialize player view
       playerView.setControllerVisibilityListener(this);
+      if (getErrorMessageProvider() != null) {
+        playerView.setErrorMessageProvider(getErrorMessageProvider());
+      }
       playerView.requestFocus();
+
+      /*if (sphericalStereoMode != null) {
+        int stereoMode;
+        if (SPHERICAL_STEREO_MODE_MONO.equals(sphericalStereoMode)) {
+          stereoMode = C.STEREO_MODE_MONO;
+        } else if (SPHERICAL_STEREO_MODE_TOP_BOTTOM.equals(sphericalStereoMode)) {
+          stereoMode = C.STEREO_MODE_TOP_BOTTOM;
+        } else if (SPHERICAL_STEREO_MODE_LEFT_RIGHT.equals(sphericalStereoMode)) {
+          stereoMode = C.STEREO_MODE_LEFT_RIGHT;
+        } else {
+          onError(getContext().getString(R.string.error_unrecognized_stereo_mode), new IllegalArgumentException(getContext().getString(R.string.error_unrecognized_stereo_mode));
+          return;
+        }
+        ((SphericalSurfaceView) playerView.getVideoSurfaceView()).setDefaultStereoMode(stereoMode);
+      }*/
+
     }
 
     // Restore instance state
@@ -322,9 +343,6 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     player.setPlayWhenReady(startAutoPlay);
     player.addAnalyticsListener(new EventLogger(trackSelector));
     if (playerView != null) {
-      if (getErrorMessageProvider() != null) {
-        playerView.setErrorMessageProvider(getErrorMessageProvider());
-      }
       playerView.setPlayer(player);
       playerView.setPlaybackPreparer(this);
     }
@@ -432,6 +450,10 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
     return null;
   }
 
+  protected String getApplicationName() {
+      return SimpleExoPlayerManager.class.getSimpleName();
+  }
+
   /*** Returns a new DataSource factory.*/
   @Override
   public DataSource.Factory buildDataSourceFactory() {
@@ -443,7 +465,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   /*** Returns a {@link HttpDataSource.Factory}.*/
   @Override
   public HttpDataSource.Factory buildHttpDataSourceFactory() {
-    return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), USER_AGENT));
+    return new DefaultHttpDataSourceFactory(Util.getUserAgent(getContext(), getApplicationName()));
   }
 
   @Override
@@ -454,7 +476,7 @@ public class SimpleExoPlayerManager<D> extends ExoPlayerManager<D>
   @Override
   @SuppressWarnings("unchecked")
   public MediaSource buildMediaSource(Uri uri, @Nullable String overrideExtension) {
-    return PlayerUtils.buildSimpleMediaSource(buildDataSourceFactory(), mediaDataSourceFactory, uri,
+    return PlayerUtils.buildSimpleMediaSource(buildDataSourceFactory(), dataSourceFactory, uri,
         overrideExtension);
   }
 
